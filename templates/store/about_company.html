@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+      {% block content %}
+
+      <!-- HERO SECTION-->
+      <div class="container">
+            <!-- CATEGORIES SECTION-->
+            <section class="pt-5">
+              <header>
+                  <h2 class="h5 text-uppercase mb-4">RUSTORE – один из лидеров рынка по продаже цифровой и бытовой техники в России</h2>
+                  <p class="small text-muted small text-uppercase mb-1">Наша цель изменить жизнь людей, сделав простым доступ к огромному количеству качественных и недорогих товаров, предоставляя лучший сервис.</p>
+              </header>
+            </section>
+
+           <!-- map-->
+           <section class="py-5">
+                    <div id='map'></div>
+
+                    <script type="text/javascript">
+                           const container = document.getElementById('popup');
+                           console.log(container);
+                           const overlay = new ol.Overlay({
+                             element: container
+                           });
+
+                          const map = new ol.Map({
+                            target: 'map',
+                            overlays: [overlay],
+                            layers: [
+                              new ol.layer.Tile({
+                                source: new ol.source.OSM()
+                              })
+                            ],
+                            view: new ol.View({
+                              center: ol.proj.transform([92.86752205970802, 56.00994080975181], 'EPSG:4326','EPSG:3857'),
+                              zoom: 16,
+                              projection: 'EPSG:3857'
+                            }),
+
+                          });
+
+                          const markerGeometry = new ol.geom.Point(ol.proj.transform([92.86752205970802, 56.00994080975181], 'EPSG:4326','EPSG:3857'));
+                          const markerFeature = new ol.Feature({
+                              geometry: markerGeometry
+                          });
+
+                          const vectorSource = new ol.source.Vector({
+                              features: [markerFeature]
+                          });
+
+                          const myStyle = new ol.style.Style({
+                            image: new ol.style.Circle({
+                              radius: 7,
+                              fill: new ol.style.Fill({color: 'blue'}),
+                              stroke: new ol.style.Stroke({
+                                color: [255,0,0], width: 2
+                              })
+                            }),
+                            text: new ol.style.Text({
+                              text: 'RUSTORE',
+                              offsetX: 10,
+                              offsetY: 20,
+                            })
+                          })
+
+                          const markerLayer = new ol.layer.Vector({
+                              title: "RoutePoint",
+                              visible: true,
+                              source: vectorSource,
+                              style: myStyle
+                          });
+
+                          map.on('singleclick', function (evt) {
+                          const coordinate = evt.coordinate;
+                          console.log(coordinate);
+                          overlay.setPosition(coordinate);
+                          });
+
+                          map.addLayer(markerLayer);
+                      </script>
+
+           </section>
+
+
+            <!-- SCROLL-UP-->
+            <section>
+                  <div class="upward" onclick="scrollTopTop()">
+                    <i class="fa-solid fa-arrow-up"></i>
+                  </div>
+            </section>
+      </div>
+
+
+      {% endblock content %}
