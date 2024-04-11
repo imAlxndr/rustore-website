@@ -253,17 +253,97 @@ def minus_cart(request, cart_id):  # удаляет 1 товар в количе
 # на страницу входа, если это необходимо.
 def checkout(request):  # оформление заказа
     user = request.user
-    address_id = request.GET.get('address')
+    order = Order.objects.filter(user=user).last()
+    cart_products = Cart.objects.filter(user=user)
 
-    address = get_object_or_404(Address, id=address_id)
-    # получаем все товары пользователя в корзине
-    cart = Cart.objects.filter(user=user)
-    for c in cart:
-        # сохраняет все товары из корзины в заказ
-        Order(user=user, address=address, product=c.product, quantity=c.quantity).save()
-        # удаляет из корзины
-        c.delete()
-    return redirect('store:orders')
+    # Показывает итог на странице заказа
+    amount = decimal.Decimal(0)
+    shipping_amount = decimal.Decimal(250)
+    # список для расчета общей суммы на основе количества и стоимости
+    cp = [p for p in Cart.objects.all() if p.user == user]
+    if cp:
+        for p in cp:
+            temp_amount = (p.quantity * p.product.price)
+            amount += temp_amount
+
+    # Customer Addresses
+    addresses = Address.objects.filter(user=user)
+    store_address = {
+        'locality': 'ул. Карла Маркса, д. 125',
+        'city': 'Красноярск',
+        'state': 'Центральный район'
+    }
+
+    context = {
+        'order': order,
+        'cart_products': cart_products,
+        'amount': amount,
+        'shipping_amount': shipping_amount,
+        'total_amount': amount + shipping_amount,
+        'addresses': addresses,
+        'store_address': store_address,
+    }
+
+    if request.method == 'POST':
+        # Здесь должен быть код для обработки платежа
+        # Например, вызов API платежной системы
+        payment_result = process_payment(request)
+
+        if payment_result['success']:
+            address_id = request.POST.get('address')
+            address = get_object_or_404(Address, id=address_id, user=user)
+
+            for item in cart_products:
+                Order(user=user, address=address, product=item.product, quantity=item.quantity).save()
+                item.delete()
+
+            # Перенаправление на страницу подтверждения заказа
+            return redirect('store:order-confirmation')
+        else:
+            # Обработка случая, когда платеж не прошел
+            pass
+
+        delivery_method = request.POST.get('delivery_method')
+        payment_method = request.POST.get('payment_method')
+
+        if payment_method == 'card':
+            # Здесь должен быть код для обработки данных карты
+            card_number = request.POST.get('card_number')
+            card_expiry = request.POST.get('card_expiry')
+            card_cvc = request.POST.get('card_cvc')
+            # Вызов API платежной системы для обработки платежа
+
+        if delivery_method == 'pickup':
+            # Установка адреса магазина для самовывоза
+            address = store_address
+        elif delivery_method == 'delivery':
+            # Использование существующего адреса пользователя
+            address_id = request.POST.get('address')
+            address = get_object_or_404(Address, id=address_id, user=user)
+
+    return render(request, 'store/checkout.html', context)
+
+
+def process_payment(request):
+    # Здесь должен быть код для обработки платежа
+    # Это просто пример и не реальный код
+    return {'success': True}
+
+
+@login_required
+def order_confirmation(request):
+    user = request.user
+    # Получаем последний заказ пользователя
+    order = Order.objects.filter(user=user).last()
+
+    if not order:
+        # Если заказ не найден, перенаправляем на главную страницу или страницу с корзиной
+        return redirect('store:home')
+
+    context = {
+        'order': order,
+    }
+    return render(request, 'store/order_confirmation.html', context)
 
 
 @login_required  # Декоратор для представлений, который проверяет, что пользователь вошел в систему, перенаправляя

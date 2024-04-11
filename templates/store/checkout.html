@@ -28,99 +28,68 @@
           <h2 class="h5 text-uppercase mb-4">Платежные реквизиты</h2>
           <div class="row">
             <div class="col-lg-8">
-              <form action="#">
+              <form action="{% url 'store:checkout' %}" method="post">
+                {% csrf_token %}
                 <div class="row">
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="firstName">First name</label>
-                    <input class="form-control form-control-lg" id="firstName" type="text" placeholder="Enter your first name">
+                    <label class="text-small text-uppercase" for="firstName">Имя</label>
+                    <input class="form-control form-control-lg" id="firstName" type="text" placeholder="Имя">
                   </div>
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="lastName">Last name</label>
-                    <input class="form-control form-control-lg" id="lastName" type="text" placeholder="Enter your last name">
+                    <label class="text-small text-uppercase" for="lastName">Фамилия</label>
+                    <input class="form-control form-control-lg" id="lastName" type="text" placeholder="Фамилия">
                   </div>
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="email">Email address</label>
-                    <input class="form-control form-control-lg" id="email" type="email" placeholder="e.g. Jason@example.com">
+                    <label class="text-small text-uppercase" for="email">Email</label>
+                    <input class="form-control form-control-lg" id="email" type="email" placeholder="Email">
                   </div>
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="phone">Phone number</label>
-                    <input class="form-control form-control-lg" id="phone" type="tel" placeholder="e.g. +02 245354745">
+                    <label class="text-small text-uppercase" for="phone">Телефон</label>
+                    <input class="form-control form-control-lg" id="phone" type="tel" placeholder="Телефон">
                   </div>
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="company">Company name (optional)</label>
-                    <input class="form-control form-control-lg" id="company" type="text" placeholder="Your company name">
+                    <label class="text-small text-uppercase" for="deliveryMethod">Способ получения:</label>
+                    <select class="form-control" id="deliveryMethod" name="delivery_method" required>
+                      <option value="pickup">Самовывоз</option>
+                      <option value="delivery">Доставка</option>
+                    </select>
                   </div>
+                  <div class="col-lg-6 form-group" id="deliveryAddressSection" style="display: none;">
+                  <label class="text-small text-uppercase">Выберите адрес доставки</label>
+                    {% if addresses %}
+                      {% for address in addresses %}
+                        <div class="mb-3">
+                        <input type="radio" name="address" value="{{address.id}}">
+                          <strong>Адрес {{forloop.counter}}</strong> <br>
+                          ( {{address.locality}}, {{address.city}}, {{address.state}} )
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <div class="col-lg-6 form-group" id="pickupAddressSection" style="display: none;">
+                    <label class="text-small text-uppercase">Адрес магазина для самовывоза</label>
+                    <p>{{ store_address.locality }}, {{ store_address.city }}, {{ store_address.state }}</p>
+                  </div>
+
                   <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="country">Country</label>
-                    <select class="selectpicker country" id="country" data-width="fit" data-style="form-control form-control-lg" data-title="Select your country"></select>
+                    <label class="text-small text-uppercase" for="paymentMethod">Способ оплаты:</label>
+                    <select class="form-control" id="paymentMethod" name="payment_method" required>
+                      <option value="cash">Наличными при получении</option>
+                      <option value="card">Картой</option>
+                    </select>
                   </div>
-                  <div class="col-lg-12 form-group">
-                    <label class="text-small text-uppercase" for="address">Address line 1</label>
-                    <input class="form-control form-control-lg" id="address" type="text" placeholder="House number and street name">
-                  </div>
-                  <div class="col-lg-12 form-group">
-                    <label class="text-small text-uppercase" for="address">Address line 2</label>
-                    <input class="form-control form-control-lg" id="addressalt" type="text" placeholder="Apartment, Suite, Unit, etc (optional)">
-                  </div>
-                  <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="city">Town/City</label>
-                    <input class="form-control form-control-lg" id="city" type="text">
-                  </div>
-                  <div class="col-lg-6 form-group">
-                    <label class="text-small text-uppercase" for="state">State/County</label>
-                    <input class="form-control form-control-lg" id="state" type="text">
-                  </div>
-                  <div class="col-lg-6 form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input class="custom-control-input" id="alternateAddressCheckbox" type="checkbox">
-                      <label class="custom-control-label text-small" for="alternateAddressCheckbox">Альтернативный платежный адрес</label>
+                  <div class="col-lg-6 form-group" id="cardDetails" style="display: none;">
+                    <div class="form-group">
+                      <label class="text-small text-uppercase"  for="cardNumber">Номер карты:</label>
+                      <input type="text" class="form-control" id="cardNumber" name="card_number" placeholder="Номер карты">
                     </div>
-                  </div>
-                  <div class="col-lg-12">
-                    <div class="row d-none" id="alternateAddress">
-                      <div class="col-12 mt-4">
-                        <h2 class="h4 text-uppercase mb-4">Альтернативные платежные реквизиты</h2>
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="firstName2">First name</label>
-                        <input class="form-control form-control-lg" id="firstName2" type="text" placeholder="Enter your first name">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="lastName2">Last name</label>
-                        <input class="form-control form-control-lg" id="lastName2" type="text" placeholder="Enter your last name">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="email2">Email address</label>
-                        <input class="form-control form-control-lg" id="email2" type="email" placeholder="e.g. Jason@example.com">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="phone2">Phone number</label>
-                        <input class="form-control form-control-lg" id="phone2" type="tel" placeholder="e.g. +02 245354745">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="company2">Company name (optional)</label>
-                        <input class="form-control form-control-lg" id="company2" type="text" placeholder="Your company name">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="country2">Country</label>
-                        <select class="selectpicker country" id="country2" data-width="fit" data-style="form-control form-control-lg" data-title="Select your country"></select>
-                      </div>
-                      <div class="col-lg-12 form-group">
-                        <label class="text-small text-uppercase" for="address2">Address line 1</label>
-                        <input class="form-control form-control-lg" id="address2" type="text" placeholder="House number and street name">
-                      </div>
-                      <div class="col-lg-12 form-group">
-                        <label class="text-small text-uppercase" for="address2">Address line 2</label>
-                        <input class="form-control form-control-lg" id="addressalt2" type="text" placeholder="Apartment, Suite, Unit, etc (optional)">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="city3">Town/City</label>
-                        <input class="form-control form-control-lg" id="city3" type="text">
-                      </div>
-                      <div class="col-lg-6 form-group">
-                        <label class="text-small text-uppercase" for="state4">State/County</label>
-                        <input class="form-control form-control-lg" id="state4" type="text">
-                      </div>
+                    <div class="form-group">
+                      <label class="text-small text-uppercase"  for="cardExpiry">Срок действия:</label>
+                      <input type="text" class="form-control" id="cardExpiry" name="card_expiry" placeholder="ММ/ГГ">
+                    </div>
+                    <div class="form-group">
+                      <label class="text-small text-uppercase"  for="cardCVC">CVC:</label>
+                      <input type="text" class="form-control" id="cardCVC" name="card_cvc" placeholder="CVC">
                     </div>
                   </div>
                   <div class="col-lg-12 form-group">
@@ -135,11 +104,25 @@
                 <div class="card-body">
                   <h5 class="text-uppercase mb-4">Ваш заказ</h5>
                   <ul class="list-unstyled mb-0">
-                    <li class="d-flex align-items-center justify-content-between"><strong class="small font-weight-bold">Блок питания DEEPCOOL PQ1000M</strong><span class="text-muted small">₽13,299.00</span></li>
+                    {% for item in cart_products %}
+                    <li class="d-flex align-items-center justify-content-between">
+                        <strong class="small font-weight-bold">{{ item.product.title }}</strong>
+                        <span class="text-muted small">{{ item.quantity }} x {{ item.product.price }} ₽</span>
+                    </li>
                     <li class="border-bottom my-2"></li>
-                    <li class="d-flex align-items-center justify-content-between"><strong class="small font-weight-bold">Процессор AMD Ryzen 5 7500F OEM</strong><span class="text-muted small">₽19,999.00</span></li>
-                    <li class="border-bottom my-2"></li>
-                    <li class="d-flex align-items-center justify-content-between"><strong class="text-uppercase small font-weight-bold">Общее</strong><span>₽33,308.00</span></li>
+                    {% endfor %}
+                    <li class="d-flex align-items-center justify-content-between">
+                      <strong class="text-uppercase small font-weight-bold">Промежуточный итог</strong>
+                      <span>{{amount}} ₽</span>
+                    </li>
+                    <li class="d-flex align-items-center justify-content-between">
+                      <strong class="text-uppercase small font-weight-bold">Стоимость доставки</strong>
+                      <span>+ {{shipping_amount}} ₽</span>
+                    </li>
+                    <li class="d-flex align-items-center justify-content-between">
+                        <strong class="text-uppercase small font-weight-bold">Общее</strong>
+                        <span>{{ total_amount }} ₽</span>
+                    </li>
                   </ul>
                 </div>
               </div>

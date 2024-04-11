@@ -116,7 +116,7 @@
                   
                   <h5 class="text-uppercase my-5">Выберите адрес доставки</h5>
                   
-                  <form action="{% url 'store:checkout' %}" id="myform">
+                  <form action="{% url 'store:checkout' %}" method="get" id="myform">
 
                     {% if addresses %}
                       {% for address in addresses %}

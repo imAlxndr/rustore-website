@@ -63,6 +63,35 @@
         injectSvgSprite('https://bootstraptemple.com/files/icons/orion-svg-sprite.svg');
 
       </script>
+
+      <script>
+      // JavaScript для отображения полей ввода данных карты при выборе оплаты картой
+      document.getElementById('paymentMethod').addEventListener('change', function() {
+        var paymentMethod = this.value;
+        var cardDetails = document.getElementById('cardDetails');
+        if (paymentMethod === 'card') {
+          cardDetails.style.display = 'block';
+        } else {
+          cardDetails.style.display = 'none';
+        }
+      });
+      </script>
+
+      <script>
+      // JavaScript для управления отображением адресов в зависимости от выбора способа получения
+      document.getElementById('deliveryMethod').addEventListener('change', function() {
+        var deliveryMethod = this.value;
+        var deliveryAddressSection = document.getElementById('deliveryAddressSection');
+        var pickupAddressSection = document.getElementById('pickupAddressSection');
+        if (deliveryMethod === 'pickup') {
+          deliveryAddressSection.style.display = 'none';
+          pickupAddressSection.style.display = 'block';
+        } else if (deliveryMethod === 'delivery') {
+          deliveryAddressSection.style.display = 'block';
+          pickupAddressSection.style.display = 'none';
+        }
+      });
+      </script>
       <!-- FontAwesome CSS - loading as last, so it doesn't block rendering-->
       <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     </div>

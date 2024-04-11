@@ -18,6 +18,7 @@ urlpatterns = [
     path('minus-cart/<int:cart_id>/', views.minus_cart, name="minus-cart"),
     path('cart/', views.cart, name="cart"),
     path('checkout/', views.checkout, name="checkout"),
+    path('order-confirmation/', views.order_confirmation, name='order-confirmation'),
     path('orders/', views.orders, name="orders"),
 
     #URL for Products

@@ -33,7 +33,7 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         fields = ['locality', 'city', 'state']
-        widgets = {'locality':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Популярное место, такое как ресторан, торговый центр и т.д.'}), 'city':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Город'}), 'state':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Штат'})}
+        widgets = {'locality':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Популярное место, такое как ресторан, торговый центр и т.д.'}), 'city':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Город'}), 'state':forms.TextInput(attrs={'class':'form-control', 'placeholder':'Район'})}
 
 
 class PasswordChangeForm(PasswordChangeForm):
