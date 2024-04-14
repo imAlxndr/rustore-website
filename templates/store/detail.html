@@ -77,40 +77,37 @@
               </div>
             </div>
             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-              <div class="p-4 p-lg-5 bg-white">
-                <div class="row">
-                  <div class="col-lg-8">
-                    <div class="media mb-3"><img class="rounded-circle" src="{% static 'img/customer-1.png' %}" alt="" width="50">
-                      <div class="media-body ml-3">
-                        <h6 class="mb-0 text-uppercase">Виктор Пташкин</h6>
-                        <p class="small text-muted mb-0 text-uppercase">20 Мая 2022</p>
-                        <ul class="list-inline mb-1 text-xs">
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                        </ul>
-                        <p class="text-small mb-0 text-muted">Хороший товар.</p>
-                      </div>
-                    </div>
-                    <div class="media"><img class="rounded-circle" src="{% static 'img/customer-2.png' %}" alt="" width="50">
-                      <div class="media-body ml-3">
-                        <h6 class="mb-0 text-uppercase">Давид М</h6>
-                        <p class="small text-muted mb-0 text-uppercase">20 Мая 2020</p>
-                        <ul class="list-inline mb-1 text-xs">
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
-                          <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
-                        </ul>
-                        <p class="text-small mb-0 text-muted">Хотелось бы подешевле.</p>
+              {% for review in reviews %}
+                <div class="p-4 p-lg-5 bg-white">
+                  <div class="row">
+                    <div class="col-lg-8">
+                      <div class="media mb-3"><img class="rounded-circle" src="{% static 'img/customer-1.png' %}" alt="" width="50">
+                        <div class="media-body ml-3">
+                          <h6 class="mb-0 text-uppercase">{{ review.user.username }}</h6>
+                          <p class="small text-muted mb-0 text-uppercase">{{ review.created_at|date:"d M Y" }}</p>
+                          <ul class="list-inline mb-1 text-xs">
+                            {% for _ in review.stars %}
+                              <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                            {% endfor %}
+                            {% for _ in review.empty_stars %}
+                              <li class="list-inline-item m-0"><i class="far fa-star text-warning"></i></li>
+                            {% endfor %}
+                          </ul>
+                          <p class="text-small mb-0 text-muted">{{ review.text }}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              {% empty %}
+              <p class="text-small mb-0 text-muted">Пока нет отзывов.</p>
+              {% endfor %}
+
+              <form method="post" action="{% url 'store:product-detail' product.slug %}" class="review-form">
+                {% csrf_token %}
+                {{ review_form.as_p }}
+                <button type="submit" class="btn btn-primary">Оставить отзыв</button>
+              </form>
             </div>
           </div>
 
@@ -137,7 +134,15 @@
                       <div class="product-overlay">
                         <ul class="mb-0 list-inline">
                           <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-outline-dark" href="#"><i class="far fa-heart"></i></a></li>
-                          <li class="list-inline-item m-0 p-0"><a class="btn btn-sm btn-dark" href="{% url 'store:add-to-cart' %}">Добавить в корзину</a></li>
+                          <li class="list-inline-item m-0 p-0">
+                            {% comment %} <a class="btn btn-sm btn-dark" href="{% url 'store:add-to-cart' %}">Добавить в корзину</a> {% endcomment %}
+
+                            <form action="{% url 'store:add-to-cart' %} ">
+                              <input type="hidden" name="prod_id" value="{{product.id}}" id="product_id">
+                              <button type="submit" class="btn btn-sm btn-dark">Добавить в корзину</button>
+                            </form>
+
+                          </li>
                         </ul>
                       </div>
                     </div>

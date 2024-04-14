@@ -97,3 +97,13 @@ class Order(models.Model):
         max_length=50,
         default="В ожижании"
     )
+
+class Review(models.Model):
+    product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
+    text = models.TextField("Текст отзыва")
+    rating = models.PositiveSmallIntegerField("Рейтинг")
+    created_at = models.DateTimeField("Дата отзыва", auto_now_add=True)
+
+    def __str__(self):
+        return f"Отзыв от {self.user.username} на {self.product}"

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-uppercase mb-4">Подтверждение заказа</h2>
+            <p class="mb-3">Спасибо за ваш заказ, {{ request.user.username }}!</p>
+            <p>Номер вашего заказа: {{ order.id }}</p>
+            <p>Дата заказа: {{ order.ordered_date }}</p>
+            <p>Адрес доставки: {{ order.address }}</p>
+            <a href="{% url 'store:home' %}" class="btn btn-primary">Вернуться на главную</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

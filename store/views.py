@@ -1,9 +1,9 @@
 import django
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from store.models import Address, Cart, Category, Order, Product
+from store.models import Address, Cart, Category, Order, Product, Review
 from django.shortcuts import redirect, render, get_object_or_404
-from .forms import RegistrationForm, AddressForm
+from .forms import RegistrationForm, AddressForm, ReviewForm
 from django.contrib import messages
 from django.views import View
 import decimal
@@ -34,10 +34,27 @@ def search(request):
 def detail(request, slug):  # получаем инфу о товаре и похожий товар
     product = get_object_or_404(Product, slug=slug)
     related_products = Product.objects.exclude(id=product.id).filter(is_active=True, category=product.category)
+    reviews = Review.objects.filter(product=product).order_by('-created_at')
+    for review in reviews:
+        review.stars = range(review.rating)  # Создаем список звезд для каждого отзыва
+        review.empty_stars = range(5 - review.rating)  # Создаем список пустых звезд
+
+    if request.method == 'POST':
+        review_form = ReviewForm(request.POST)
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.product = product
+            review.user = request.user  # Убедитесь, что пользователь авторизован
+            review.save()
+            return redirect('store:product-detail', slug=slug)
+    else:
+        review_form = ReviewForm()
+
     context = {
         'product': product,
         'related_products': related_products,
-
+        'reviews': reviews,
+        'review_form': review_form,
     }
     return render(request, 'store/detail.html', context)
 
