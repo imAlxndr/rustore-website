@@ -22,14 +22,14 @@
               <div class="card-body">
                 {% if addresses %}
                     {% for address in addresses %}
-                        <h4 class="mb-3">Address {{forloop.counter}}</h4> 
+                        <h4 class="mb-3">Адрес {{forloop.counter}}</h4>
                         
                         <span class="float-right"><a href="{% url 'store:remove-address' address.id %}"><i class="fas fa-trash-alt small text-muted"></i></a></span>
 
                         <p>
                             <strong>Местонахождение: </strong>{{address.locality}} <br>
                             <strong>Город: </strong>{{address.city}} <br>
-                            <strong>Штат: </strong>{{address.state}} <br>
+                            <strong>Район: </strong>{{address.state}} <br>
                         </p>
 
                         <hr>
