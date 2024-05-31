@@ -56,7 +56,7 @@
 
                 </div>
 
-              </div><a class="btn btn-link text-dark p-0 mb-4" href="#"><i class="far fa-heart mr-2"></i>Добавить в избранное</a><br>
+              </div><a class="btn btn-link text-dark p-0 mb-4" href="{% url 'store:add-to-favorites' %}?prod_id={{ product.id }}"><i class="far fa-heart mr-2"></i>Добавить в избранное</a><br>
               <ul class="list-unstyled small d-inline-block">
                 <li class="px-3 py-2 mb-1 bg-white"><strong class="text-uppercase">Артикул:</strong><span class="ml-2 text-muted">{{product.sku}}</span></li>
                 <li class="px-3 py-2 mb-1 bg-white text-muted"><strong class="text-uppercase text-dark">Категория:</strong><a class="reset-anchor ml-2" href="{% url 'store:category-products' product.category.slug %}">{{product.category}}</a></li>

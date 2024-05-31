@@ -86,6 +86,15 @@ STATUS_CHOICES = (
 )
 
 
+class Favorite(models.Model):
+    user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, verbose_name="Product", on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name="Added Date")
+
+    def __str__(self):
+        return f'{self.product.title} ({self.user.username})'
+
+
 class Order(models.Model):
     user = models.ForeignKey(User, verbose_name="User", on_delete=models.CASCADE)
     address = models.ForeignKey(Address, verbose_name="Shipping Address", on_delete=models.CASCADE)

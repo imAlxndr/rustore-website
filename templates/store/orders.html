@@ -35,7 +35,7 @@
                         {% endif %}
                       </td>
                       <td>{{order.quantity}}</td>
-                      <td>{{order.ordered_date|naturaltime}}</td>
+                      <td>{{order.ordered_date|date:"d E Y H:i"}}</td>
                       <td>
 
                         {% if order.status == 'В ожидании' %}

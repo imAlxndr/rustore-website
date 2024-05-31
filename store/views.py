@@ -1,7 +1,7 @@
 import django
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from store.models import Address, Cart, Category, Order, Product, Review
+from store.models import Address, Cart, Category, Order, Product, Review, Favorite
 from django.shortcuts import redirect, render, get_object_or_404
 from .forms import RegistrationForm, AddressForm, ReviewForm
 from django.contrib import messages
@@ -240,6 +240,41 @@ def remove_cart(request, cart_id):  # удаление товара из кор�
         c.delete()
         messages.success(request, "Товар удален из корзины.")
     return redirect('store:cart')
+
+
+@login_required
+def add_to_favorites(request):
+    user = request.user
+    product_id = request.GET.get('prod_id')
+    product = get_object_or_404(Product, id=product_id)
+
+    # Создаем избранное, если еще нет
+    favorite, created = Favorite.objects.get_or_create(user=user, product=product)
+
+    if created:
+        messages.success(request, "Товар добавлен в избранное.")
+    else:
+        messages.info(request, "Товар уже в избранном.")
+
+    return redirect('store:favorites')  # Перенаправляем на страницу с избранными товарами
+
+
+
+@login_required
+def favorites(request):
+    user = request.user
+    favorites = Favorite.objects.filter(user=user)
+    context = {
+        'favorites': favorites,
+    }
+    return render(request, 'store/favorites.html', context)
+
+
+@login_required
+def remove_from_favorites(request, favorite_id):
+    favorite = get_object_or_404(Favorite, id=favorite_id, user=request.user)
+    favorite.delete()
+    return redirect('store:favorites')
 
 
 @login_required  # Декоратор для представлений, который проверяет, что пользователь вошел в систему, перенаправляя

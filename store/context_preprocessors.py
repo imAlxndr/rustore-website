@@ -1,4 +1,4 @@
-from .models import Category, Cart
+from .models import Category, Cart, Favorite
 
 
 def store_menu(request):
@@ -7,6 +7,7 @@ def store_menu(request):
         'categories_menu': categories,
     }
     return context
+
 
 def cart_menu(request):
     if request.user.is_authenticated:                      #проверка пользователя на аутентификацию
@@ -17,3 +18,11 @@ def cart_menu(request):
     else:
         context = {}
     return context
+
+
+def favorites_count(request):
+    if request.user.is_authenticated:
+        count = Favorite.objects.filter(user=request.user).count()
+    else:
+        count = 0
+    return {'favorites_count': count}
